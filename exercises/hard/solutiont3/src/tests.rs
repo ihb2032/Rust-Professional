@@ -22,7 +22,6 @@ mod tests {
         if duration <= Duration::from_millis(500) && result == TEST_CASE {
             total_score += 100.0;
         }
-
         println!("Total score: {:.2}", total_score);
         assert_eq!(100.00, total_score);
     }

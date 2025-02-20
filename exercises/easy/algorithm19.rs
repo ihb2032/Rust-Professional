@@ -1,19 +1,44 @@
 /*
     Nth Fibonacci Number
-    Implement a function to calculate the `n`th Fibonacci number. 
+    Implement a function to calculate the `n`th Fibonacci number.
     The Fibonacci sequence is defined as follows:
     F(0) = 0, F(1) = 1, F(n) = F(n-1) + F(n-2) for n > 1.
 
     You need to implement the function `fib(n: i32) -> i32` to return the `n`th Fibonacci number.
-    
+
     Hint: Consider using matrix exponentiation to solve the problem in O(log n) time complexity.
 */
 
 use std::fmt::{self, Display, Formatter};
 
+fn matrix_multiply(a: [[i32; 2]; 2], b: [[i32; 2]; 2]) -> [[i32; 2]; 2] {
+    let mut result = [[0; 2]; 2];
+    result[0][0] = a[0][0] * b[0][0] + a[0][1] * b[1][0];
+    result[0][1] = a[0][0] * b[0][1] + a[0][1] * b[1][1];
+    result[1][0] = a[1][0] * b[0][0] + a[1][1] * b[1][0];
+    result[1][1] = a[1][0] * b[0][1] + a[1][1] * b[1][1];
+    result
+}
+
+fn matrix_power(mut base: [[i32; 2]; 2], mut exponent: i32) -> [[i32; 2]; 2] {
+    let mut result = [[1, 0], [0, 1]];
+    while exponent > 0 {
+        if exponent % 2 == 1 {
+            result = matrix_multiply(result, base);
+        }
+        base = matrix_multiply(base, base);
+        exponent /= 2;
+    }
+    result
+}
+
 pub fn fib(n: i32) -> i32 {
-    // TODO: Implement the logic to calculate the nth Fibonacci number using matrix exponentiation
-    0 // Placeholder return value
+    if n <= 1 {
+        return n;
+    }
+    let base_matrix = [[1, 1], [1, 0]];
+    let result_matrix = matrix_power(base_matrix, n - 1);
+    result_matrix[0][0]
 }
 
 #[cfg(test)]

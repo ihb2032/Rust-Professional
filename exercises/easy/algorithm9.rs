@@ -1,8 +1,7 @@
 /*
-	heap
-	This question requires you to implement a binary heap function
+    heap
+    This question requires you to implement a binary heap function
 */
-
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -38,6 +37,14 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.items.push(value);
+        self.count += 1;
+        let mut idx = self.count;
+        while idx > 1 && (self.comparator)(&self.items[idx], &self.items[self.parent_idx(idx)]) {
+            let parent_idx = self.parent_idx(idx);
+            self.items.swap(idx, parent_idx);
+            idx = parent_idx;
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -58,7 +65,31 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+        let left = self.left_child_idx(idx);
+        if left > self.count {
+         return idx;
+        }
+        let right = self.right_child_idx(idx);
+        if right > self.count {
+            return left;
+        }
+        if (self.comparator)(&self.items[left], &self.items[right]) {
+            return left;
+        } else {
+            return right;
+        }
+    }
+    fn sift_down(&mut self, idx: usize) {
+        let mut idx = idx;
+        while self.children_present(idx) {
+            let child = self.smallest_child_idx(idx);
+            if (self.comparator)(&self.items[child], &self.items[idx]) {
+                self.items.swap(idx, child);
+                idx = child;
+            } else {
+                break;
+            }
+        }
     }
 }
 
@@ -79,13 +110,24 @@ where
 
 impl<T> Iterator for Heap<T>
 where
-    T: Default,
+    T: Default+ Clone,
 {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+        if self.is_empty() {
+            None
+        } else {
+            let root = self.items[1].clone();
+            self.items.swap(1, self.count);
+            self.count -= 1;
+            if self.count > 0 {
+                self.sift_down(1);
+            }
+            self.items.pop();
+            Some(root)
+        }
     }
 }
 
